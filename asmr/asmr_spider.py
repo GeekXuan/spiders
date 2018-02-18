@@ -111,7 +111,7 @@ def download_mul(prelist):
     func_var = []
     for each in prelist:
         func_var.append(([each, False], None))
-    pool = threadpool.ThreadPool(1)
+    pool = threadpool.ThreadPool(20)
     requests = threadpool.makeRequests(download, func_var)
     [pool.putRequest(req) for req in requests]
     pool.wait()
