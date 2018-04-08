@@ -79,7 +79,7 @@ def get_source(url):
         for i in range(len(links)):
             # 找密码
             a = html.find(links[i])
-            b = html.find('密码', a - 255, a + 255)
+            b = html.find('密码', a, a + 255)
             psw = html[b:b + 8]
             psw = psw.partition('<')[0]
             # 合集找小标题
@@ -88,12 +88,16 @@ def get_source(url):
                 c = html.find('>', a + 1, a + 255)
                 title_l = html[c:c + 64]
                 if title_l != '' and title_l.find('>') != -1:
-                    title_l = title_l.split('>')[1].split('<')[0].strip()
+                    # title_l = title_l.split('>')[1].split('<')[0].strip()
+                    temp = title_l.split('>')
+                    title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp\
+                        else (temp[2].split('<')[0].strip())
                 if title_l.endswith('点我'):
                     title_l = title_l[:-2]
             # if title_l != '':
             #     print(title_l, end='  ')
             # print(links[i] + '\t' + psw)
+            # print(title, title_l, url, links[i], psw)
             conn = sqlite3.connect('movie.db')
             cursor = conn.cursor()
             cursor.execute('insert into dlinks (title, title2, p_link, d_link, pwd) values (?, ?, ?, ?, ?)', (title, title_l, url, links[i], psw))
