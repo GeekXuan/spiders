@@ -73,7 +73,8 @@ def get_source(url):
         soup = BeautifulSoup(html, "html.parser")
         # type_ = soup.find(rel="category tag").string
         title = soup.find('title').string.split('|')[0]
-        p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,8})'
+        # p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,24})'
+        p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9|\-|_]+)'
         links = re.findall(p, html)
         # print(title, type_, links)
         for i in range(len(links)):
@@ -90,8 +91,11 @@ def get_source(url):
                 if title_l != '' and title_l.find('>') != -1:
                     # title_l = title_l.split('>')[1].split('<')[0].strip()
                     temp = title_l.split('>')
-                    title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp\
-                        else (temp[2].split('<')[0].strip())
+                    if '</a' in temp[1]:
+                        title_l = temp[1].split('<')[0].strip()
+                    else:
+                        title_l = temp[2].split('<')[0].strip()
+                    # title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp else (temp[2].split('<')[0].strip())
                 if title_l.endswith('点我'):
                     title_l = title_l[:-2]
             # if title_l != '':

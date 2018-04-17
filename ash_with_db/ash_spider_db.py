@@ -54,13 +54,13 @@ def get_links_mul(url):
     end_num = int(end_page.split('/')[-1])
     url_nums = [str(i) for i in range(1, end_num + 1)]
     print('共', end_num, '页')
-    pool = threadpool.ThreadPool(30)
+    pool = threadpool.ThreadPool(4)
     requests = threadpool.makeRequests(get_links, url_nums)
     [pool.putRequest(req) for req in requests]
-    while finish_num < end_num:
-        progressbar(finish_num, end_num)
-        time.sleep(1)
-    progressbar(finish_num, end_num, line_feed=True)
+    # while finish_num < end_num:
+    #     progressbar(finish_num, end_num)
+    #     time.sleep(1)
+    # progressbar(finish_num, end_num, line_feed=True)
     pool.wait()
 
 
@@ -73,7 +73,8 @@ def get_source(url):
         soup = BeautifulSoup(html, "html.parser")
         # type_ = soup.find(rel="category tag").string
         title = soup.find('title').string.split('|')[0]
-        p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,8})'
+        # p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,24})'
+        p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9|\-|_]+)'
         links = re.findall(p, html)
         # print(title, type_, links)
         for i in range(len(links)):
@@ -90,14 +91,17 @@ def get_source(url):
                 if title_l != '' and title_l.find('>') != -1:
                     # title_l = title_l.split('>')[1].split('<')[0].strip()
                     temp = title_l.split('>')
-                    title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp\
-                        else (temp[2].split('<')[0].strip())
+                    if '</a' in temp[1]:
+                        title_l = temp[1].split('<')[0].strip()
+                    else:
+                        title_l = temp[2].split('<')[0].strip()
+                    # title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp else (temp[2].split('<')[0].strip())
                 if title_l.endswith('点我'):
                     title_l = title_l[:-2]
             # if title_l != '':
             #     print(title_l, end='  ')
             # print(links[i] + '\t' + psw)
-            # print(title, title_l, url, links[i], psw)
+            print(title, title_l, url, links[i], psw)
             conn = sqlite3.connect('movie.db')
             cursor = conn.cursor()
             cursor.execute('insert into dlinks (title, title2, p_link, d_link, pwd) values (?, ?, ?, ?, ?)', (title, title_l, url, links[i], psw))
@@ -111,9 +115,9 @@ def get_source(url):
         cursor.close()
         conn.commit()
         conn.close()
-        # print('获取成功 %s %s' % (title, url))
+        print('获取成功 %s %s' % (title, url))
     except Exception as e:
-        # print('获取失败 %s %s ' % (url, e))
+        print('-----------------------获取失败 %s %s ' % (url, e))
         pass
     finally:
         get_num += 1
@@ -121,14 +125,14 @@ def get_source(url):
 
 # 多线程获取资源
 def get_source_mul(links):
-    pool = threadpool.ThreadPool(30)
+    pool = threadpool.ThreadPool(4)
     requests = threadpool.makeRequests(get_source, links)
     [pool.putRequest(req) for req in requests]
     num_all = len(links)
-    while get_num < num_all:
-        progressbar(get_num, num_all)
-        time.sleep(1)
-    progressbar(get_num, num_all, line_feed=True)
+    # while get_num < num_all:
+    #     progressbar(get_num, num_all)
+    #     time.sleep(1)
+    # progressbar(get_num, num_all, line_feed=True)
     pool.wait()
 
 
@@ -170,7 +174,7 @@ def main(update=False, get_dlink=True):
         cursor.close()
         conn.close()
         # print(links)
-        # links = ['http://m.ashvsash.com/2018/02/15954/?', 'http://m.ashvsash.com/2017/01/1690/?']
+        # links = ['http://m.ashvsash.com/2017/10/444']
         get_source_mul(links)
         print('获取完成，本次获取%d条数据。' % len(links))
     # conn = sqlite3.connect('movie.db')
@@ -202,7 +206,19 @@ def search(string):
     conn.close()
 
 
+def test():
+    conn = sqlite3.connect('movie.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM dlinks")
+    data = cursor.fetchall()
+    print(data)
+    print(len(data))
+    cursor.close()
+    conn.close()
+
+
 if __name__ == '__main__':
+    # test()
     if not os.path.exists('movie.db'):
         print('未找到数据库，请先更新数据！')
     while True:
