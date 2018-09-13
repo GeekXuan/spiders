@@ -42,6 +42,7 @@ def get_links(url_num):
     soup_n = BeautifulSoup(r_n.content, "html.parser")
     article = soup_n.find_all(class_='thumbnail')
     for each in article:
+        print(each.a['href'])
         page_links.append(each.a['href'])
     finish_num += 1
 
@@ -54,7 +55,7 @@ def get_links_mul(url):
     end_num = int(end_page.split('/')[-1])
     url_nums = [str(i) for i in range(1, end_num + 1)]
     print('共', end_num, '页')
-    pool = threadpool.ThreadPool(4)
+    pool = threadpool.ThreadPool(30)
     requests = threadpool.makeRequests(get_links, url_nums)
     [pool.putRequest(req) for req in requests]
     # while finish_num < end_num:
@@ -73,7 +74,7 @@ def get_source(url):
         soup = BeautifulSoup(html, "html.parser")
         # type_ = soup.find(rel="category tag").string
         title = soup.find('title').string.split('|')[0]
-        # p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,24})'
+        # p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9]{6,26})'
         p = r'(?:https*://pan\.baidu\.com/s/[A-z|0-9|\-|_]+)'
         links = re.findall(p, html)
         # print(title, type_, links)
@@ -95,13 +96,14 @@ def get_source(url):
                         title_l = temp[1].split('<')[0].strip()
                     else:
                         title_l = temp[2].split('<')[0].strip()
-                    # title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp else (temp[2].split('<')[0].strip())
+                    # title_l = (temp[1].split('<')[0].strip()) if '</strong' in temp\
+                    #     else (temp[2].split('<')[0].strip())
                 if title_l.endswith('点我'):
                     title_l = title_l[:-2]
             # if title_l != '':
             #     print(title_l, end='  ')
             # print(links[i] + '\t' + psw)
-            print(title, title_l, url, links[i], psw)
+            # print(title, title_l, url, links[i], psw)
             conn = sqlite3.connect('movie.db')
             cursor = conn.cursor()
             cursor.execute('insert into dlinks (title, title2, p_link, d_link, pwd) values (?, ?, ?, ?, ?)', (title, title_l, url, links[i], psw))
@@ -115,9 +117,9 @@ def get_source(url):
         cursor.close()
         conn.commit()
         conn.close()
-        print('获取成功 %s %s' % (title, url))
+        # print('获取成功 %s %s' % (title, url))
     except Exception as e:
-        print('-----------------------获取失败 %s %s ' % (url, e))
+        # print('获取失败 %s %s ' % (url, e))
         pass
     finally:
         get_num += 1
@@ -125,14 +127,14 @@ def get_source(url):
 
 # 多线程获取资源
 def get_source_mul(links):
-    pool = threadpool.ThreadPool(4)
+    pool = threadpool.ThreadPool(30)
     requests = threadpool.makeRequests(get_source, links)
     [pool.putRequest(req) for req in requests]
     num_all = len(links)
-    # while get_num < num_all:
-    #     progressbar(get_num, num_all)
-    #     time.sleep(1)
-    # progressbar(get_num, num_all, line_feed=True)
+    while get_num < num_all:
+        progressbar(get_num, num_all)
+        time.sleep(1)
+    progressbar(get_num, num_all, line_feed=True)
     pool.wait()
 
 
@@ -174,7 +176,7 @@ def main(update=False, get_dlink=True):
         cursor.close()
         conn.close()
         # print(links)
-        # links = ['http://m.ashvsash.com/2017/10/444']
+        # links = ['http://m.ashvsash.com/2018/02/15954/?', 'http://m.ashvsash.com/2017/01/1690/?']
         get_source_mul(links)
         print('获取完成，本次获取%d条数据。' % len(links))
     # conn = sqlite3.connect('movie.db')
@@ -187,33 +189,31 @@ def main(update=False, get_dlink=True):
 def search(string):
     string_pinyin = ''.join(pp.lazy_pinyin(string))
     string_pinyin_firstletter = ''.join([each[0] for each in pp.pinyin(string, style=pp.Style.FIRST_LETTER)])
-    string_list = {string, string_pinyin, string_pinyin_firstletter}
-    # print(string_list)
+    string_list = {string_pinyin, string_pinyin_firstletter}
     conn = sqlite3.connect('movie.db')
     cursor = conn.cursor()
-    data = list()
+    data1 = list()
+    data2 = list()
+    cursor.execute("SELECT * FROM dlinks WHERE title LIKE '%" + string + "%'")
+    data1 += cursor.fetchall()
     for each in string_list:
         cursor.execute("SELECT * FROM dlinks WHERE title LIKE '%" + each + "%'")
-        data += cursor.fetchall()
-    if len(data) > 0:
-        print('共查询到%d条数据：' % len(data))
-        for i, each in enumerate(data):
-            print('第%d条：' % (i + 1))
-            print('%s %s %s %s\n' % (each[0], each[1], each[3], each[4]))
-    else:
-        print('未查询到。')
+        data2 += cursor.fetchall()
     cursor.close()
     conn.close()
+    return [data1, data2]
 
 
 def test():
     conn = sqlite3.connect('movie.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM dlinks")
+    cursor.execute('select * from dlinks where title like "%行尸走肉%"')
     data = cursor.fetchall()
-    print(data)
     print(len(data))
+    for each in data:
+        print(each)
     cursor.close()
+    conn.commit()
     conn.close()
 
 
@@ -228,3 +228,5 @@ if __name__ == '__main__':
         elif choice == '2':
             main(True, True)
         os.system('pause')
+
+
