@@ -1,5 +1,4 @@
-import os
-import time
+import urllib3
 import requests as rq
 import threadpool
 from bs4 import BeautifulSoup as bs
@@ -177,8 +176,12 @@ def main():
                 # time.sleep(5)
             else:
                 break
+        except (rq.exceptions.ConnectionError, urllib3.exceptions.ProtocolError) as e:
+            print(e)
+            raise SystemExit
         except Exception as e:
             print(e)
+            raise SystemExit
     while True:
         try:
             main_list = backend.query_main()
@@ -191,8 +194,12 @@ def main():
                 # time.sleep(5)
             else:
                 break
+        except (rq.exceptions.ConnectionError, urllib3.exceptions.ProtocolError) as e:
+            print(e)
+            raise SystemExit
         except Exception as e:
             print(e)
+            raise SystemExit
 
 
 if __name__ == '__main__':
