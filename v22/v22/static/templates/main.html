@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+    <title>首页</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'quote/bootstrap/4.0.0/css/bootstrap.min.css' %}">
+     <!--DataTables CSS-->
+    <link rel="stylesheet" href="{% static 'quote/datatables/1.10.16/css/dataTables.bootstrap4.min.css' %}">
+    <!--Jquery JS-->
+    <script src="{% static 'quote/jquery/3.3.1/jquery.js' %}"></script>
+    <!--end-->
+    {% block css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">主页</a>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto"></ul>
+        <a class="btn btn-outline-info" href="/try_one">不知道看啥，随便来一个</a>
+    </div>
+</nav>
+<div style="padding: 5rem 2rem;">
+    <div class="container">
+        <form class="form-horizontal" id="search_form">
+            <div class="form-group row">
+                <label class="col-sm-1 control-label" for="id_">编号</label>
+                <div class="col-sm-2">
+                    <input id="id_" name="id_" class="id_ form-control" type="number">
+                </div>
+
+                <label class="col-sm-1 control-label" for="code">番号</label>
+                <div class="col-md-2">
+                    <input id="code" name="code" class="code form-control" type="text">
+                </div>
+
+                <label class="col-sm-1 control-label" for="title">标题</label>
+                <div class="col-md-2">
+                    <input id="title" name="title" class="title form-control" type="text">
+                </div>
+
+                <label class="col-sm-1 control-label" for="actor">演员</label>
+                <div class="col-md-2">
+                    <input id="actor" name="actor" class="actor form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 control-label" for="type_">类型</label>
+                <div class="col-sm-2">
+                    <input id="type_" name="type_" class="type_ form-control" type="text">
+                </div>
+
+                <label class="col-sm-1 control-label" for="director">导演</label>
+                <div class="col-md-2">
+                    <input id="director" name="director" class="director form-control" type="text">
+                </div>
+
+                <label class="col-sm-1 control-label" for="producer">制造商</label>
+                <div class="col-md-2">
+                    <input id="producer" name="producer" class="producer form-control" type="text">
+                </div>
+
+                <label class="col-sm-1 control-label" for="publisher">发行商</label>
+                <div class="col-md-2">
+                    <input id="publisher" name="publisher" class="publisher form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 control-label" for="score">分数高于</label>
+                <div class="col-md-2">
+                    <select id="score" name="score" class="score form-control" type="text">
+                        <option value='-1'>请选择</option>
+                        <option value='0'>0</option>
+                        <option value='1'>1</option>
+                        <option value='2'>2</option>
+                        <option value='3'>3</option>
+                        <option value='4'>4</option>
+                        <option value='5'>5</option>
+                        <option value='6'>6</option>
+                        <option value='7'>7</option>
+                        <option value='8'>8</option>
+                        <option value='9'>9</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <button class="float-right btn btn-md btn-info" id="search_button">查询</button>
+        <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%" >
+            <thead>
+            <tr>
+                <th width="8%">编号</th>
+                <th width="8%">番号</th>
+                <th width="12%">标题</th>
+                <th width="10%">演员</th>
+                <th width="13%">类型</th>
+                <th width="10%">日期</th>
+                <th width="8%">评分</th>
+                <th width="8%">导演</th>
+                <th width="8%">制造商</th>
+                <th width="8%">发行商</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+        </table>
+        <input name="def_count" class="btn-primary" style="color:darkgrey;width: 10pt" type="hidden" value="{{ defcount }}">
+    </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+{#<script src="{% static 'quote/popper.js/1.12.9/umd/popper.min.js' %}"></script>#}
+<script src="{% static 'quote/bootstrap/4.0.0/js/bootstrap.min.js' %}"></script>
+
+<!--DataTables Boostrap JS-->
+<script src="{% static 'quote/datatables/1.10.16/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'quote/datatables/1.10.16/js/dataTables.bootstrap4.min.js' %}"></script>
+<!--end-->
+</body>
+</html>

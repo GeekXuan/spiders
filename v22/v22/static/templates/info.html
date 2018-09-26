@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+    <title>详细</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'quote/bootstrap/4.0.0/css/bootstrap.min.css' %}">
+     <!--DataTables CSS-->
+    <link rel="stylesheet" href="{% static 'quote/datatables/1.10.16/css/dataTables.bootstrap4.min.css' %}">
+    <!--Jquery JS-->
+    <script src="{% static 'quote/jquery/3.3.1/jquery.js' %}"></script>
+    <!--end-->
+    {% block css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">主页</a>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto"></ul>
+        <a class="btn btn-outline-info" href="/try_one">不知道看啥，随便来一个</a>
+    </div>
+</nav>
+<div style="padding: 5rem 2rem;">
+    <div class="container col-md-12">
+        <div class="form-group row">
+            <a href="{{ link }}"
+               target="_blank" class="col-md-8">
+                <img src="{{ link }}"
+                     alt="" class="col-md-12">
+            </a>
+            <ul class="list-group col-md-4">
+                <li class="list-group-item">编号：{{ id_ }}</li>
+                <li class="list-group-item">番号：{{ code }}</li>
+                <li class="list-group-item">标题：{{ title }}</li>
+                <li class="list-group-item">导演：{{ director }}</li>
+                <li class="list-group-item">演员：{{ actor }}</li>
+                <li class="list-group-item">发行日期：{{ date_ }}</li>
+                <li class="list-group-item">时长：{{ length }}</li>
+                <li class="list-group-item">制造商：{{ producer }}</li>
+                <li class="list-group-item">发行商：{{ publisher }}</li>
+                <li class="list-group-item">评分：{{ score }}</li>
+                <li class="list-group-item">类型：{{ type_ }}</li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <ul class="list-group">
+            {% for comment in comments %}
+            <li class="list-group-item">{{ comment }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+{#<script src="{% static 'quote/popper.js/1.12.9/umd/popper.min.js' %}"></script>#}
+<script src="{% static 'quote/bootstrap/4.0.0/js/bootstrap.min.js' %}"></script>
+
+<!--DataTables Boostrap JS-->
+<script src="{% static 'quote/datatables/1.10.16/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'quote/datatables/1.10.16/js/dataTables.bootstrap4.min.js' %}"></script>
+<!--end-->
+</body>
+</html>
