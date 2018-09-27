@@ -118,4 +118,3 @@ PORT = '3306'
 USER = 'myuser'
 PASSWORD = 'password'
 DATABASE = 'v22_db'
-MAXID = 615260
